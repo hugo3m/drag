@@ -4,40 +4,108 @@ import "@babylonjs/loaders/glTF";
 
 import { ArcRotateCamera, Engine, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3 } from "@babylonjs/core";
 
+import { redMat } from "./material";
+
 class App {
-    constructor() {
+
+    /**
+     * @description unique App singleton _instance
+     */
+    static _instance: App;
+    /**
+     * @description scene holding entities
+     */
+    _scene: Scene;
+    /**
+     * @description canvas
+     */
+    _canvas: HTMLCanvasElement
+    /**
+     * @description engine
+     */
+    _engine: Engine
+
+    /**
+     * @description returns the scene instance
+     * @returns {Scene} scene instance
+     */
+    public static get scene(): Scene
+    {
+        return App.instance._scene;
+    }
+
+    /**
+     * @description returns the HTML canvas element
+     * @returns {HTMLCanvasElement} HTML canvas
+     */
+    public static get canvas(): HTMLCanvasElement
+    {
+        return App.instance._canvas;
+    }
+
+    /**
+     * @description returns the engine
+     * @returns {Engine} engine
+     */
+    public static get engine(): Engine
+    {
+        return App.instance._engine;
+    }
+
+
+    /**
+     * @description returns the unique app instance
+     * @returns {App} app instance
+     */
+    public static get instance(): App
+    {
+        if (!App._instance)
+        {
+            App._instance = new App();
+        }
+
+        return App._instance;
+    }
+
+    /**
+     * @description start the app
+     */
+    public static start(): void
+    {
+        // run the main render loop
+        App.engine.runRenderLoop(() => {
+            App.scene.render();
+        });
+    }
+
+
+    private constructor()
+    {
         // create the canvas html element and attach it to the webpage
-        var canvas = document.createElement("canvas");
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        canvas.id = "gameCanvas";
-        document.body.appendChild(canvas);
+        this._canvas = document.createElement("canvas");
+        this._canvas.style.width = "100%";
+        this._canvas.style.height = "100%";
+        this._canvas.id = "babyloncanvas";
+        document.body.appendChild(this._canvas);
 
         // initialize babylon scene and engine
-        var engine = new Engine(canvas, true);
-        var scene = new Scene(engine);
-
-        var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, Vector3.Zero(), scene);
-        camera.attachControl(canvas, true);
-        var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), scene);
-        var sphere: Mesh = MeshBuilder.CreateSphere("sphere", { diameter: 1 }, scene);
+        this._engine = new Engine(this._canvas, true);
+        this._scene = new Scene(this._engine);
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
             // Shift+Ctrl+Alt+I
             if (ev.shiftKey && ev.ctrlKey && ev.altKey && ev.key === 'i') {
-                if (scene.debugLayer.isVisible()) {
-                    scene.debugLayer.hide();
+                if (this._scene.debugLayer.isVisible()) {
+                    this._scene.debugLayer.hide();
                 } else {
-                    scene.debugLayer.show();
+                    this._scene.debugLayer.show();
                 }
             }
         });
 
-        // run the main render loop
-        engine.runRenderLoop(() => {
-            scene.render();
-        });
     }
 }
-new App();
+
+
+export {App} ;
