@@ -1,1 +1,5 @@
 # aabb
+
+```
+npm run start
+```
