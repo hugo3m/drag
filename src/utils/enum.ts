@@ -1,0 +1,7 @@
+enum RENDERING_LAYER{
+    SCENE = 1,
+    UI_SCENE = 2,
+    DEBUG_SCENE = 3
+}
+
+export {RENDERING_LAYER}

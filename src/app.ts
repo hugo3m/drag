@@ -4,8 +4,6 @@ import "@babylonjs/loaders/glTF";
 
 import { ArcRotateCamera, Engine, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3 } from "@babylonjs/core";
 
-import { redMat } from "./material";
-
 class App {
 
     /**

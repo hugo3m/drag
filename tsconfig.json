@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es6",
     "module": "ESNext",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "noResolve": false,
     "noImplicitAny": false,
     "sourceMap": true,
     "preserveConstEnums": true,
     "lib": ["dom", "es6"],
-    "rootDir": "src"
+    "rootDir": "."
   }
 }
