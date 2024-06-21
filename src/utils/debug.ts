@@ -9,7 +9,7 @@ function DrawDebugSphere(position: BABYLON.Vector3, time: Nullable<number> = nul
     const sphere = BABYLON.CreateSphere("sphere", {diameter: 0.1}, App.scene);
     sphere.position = position;
     sphere.renderingGroupId = RENDERING_LAYER.DEBUG_SCENE;
-    sphere.material = MATERIAL_RED_MAT;
+    sphere.material = MATERIAL_RED_MAT.clone('debug_sphere_material');
     if(time){
         setTimeout(() => {
             App.scene.removeMesh(sphere);

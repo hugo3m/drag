@@ -14,23 +14,38 @@ MATERIAL_GREY.specularColor = BABYLON.Color3.Black();
 
 // red
 const MATERIAL_RED = new BABYLON.StandardMaterial("red", App.scene);
-MATERIAL_RED.diffuseColor = BABYLON.Color3.Red();
-MATERIAL_RED.specularColor = BABYLON.Color3.Red();
+MATERIAL_RED.diffuseColor = new BABYLON.Color3(0, 0, 0);
+MATERIAL_RED.specularColor = new BABYLON.Color3(0, 0, 0);
 MATERIAL_RED.emissiveColor = BABYLON.Color3.Red();
 
 // green
 const MATERIAL_GREEN = new BABYLON.StandardMaterial("green", App.scene);
-MATERIAL_GREEN.diffuseColor = BABYLON.Color3.Green();
-MATERIAL_GREEN.specularColor = BABYLON.Color3.Green();
+MATERIAL_GREEN.diffuseColor = new BABYLON.Color3(0, 0, 0);
+MATERIAL_GREEN.specularColor = new BABYLON.Color3(0, 0, 0);
 MATERIAL_GREEN.emissiveColor = BABYLON.Color3.Green();
 
 // blue
 const MATERIAL_BLUE = new BABYLON.StandardMaterial("blue", App.scene);
-MATERIAL_BLUE.diffuseColor = BABYLON.Color3.Blue();
-MATERIAL_BLUE.specularColor = BABYLON.Color3.Blue();
+MATERIAL_BLUE.diffuseColor = new BABYLON.Color3(0, 0, 0);
+MATERIAL_BLUE.specularColor = new BABYLON.Color3(0, 0, 0);
 MATERIAL_BLUE.emissiveColor = BABYLON.Color3.Blue();
 
+// white
+const MATERIAL_WHITE = new BABYLON.StandardMaterial("white", App.scene);
+MATERIAL_WHITE.diffuseColor = BABYLON.Color3.White();
+MATERIAL_WHITE.specularColor = BABYLON.Color3.White();
+MATERIAL_WHITE.emissiveColor = BABYLON.Color3.White();
+MATERIAL_WHITE.alpha = 0.5;
 
-export { MATERIAL_RED_MAT, MATERIAL_GREY, MATERIAL_RED, MATERIAL_BLUE, MATERIAL_GREEN };
+// red shiny
+const MATERIAL_HIGHLIGHT = new BABYLON.StandardMaterial("red_shiny", App.scene);
+MATERIAL_HIGHLIGHT.diffuseColor = new BABYLON.Color3(0, 0, 0);
+MATERIAL_HIGHLIGHT.specularColor = new BABYLON.Color3(0, 0, 0);
+MATERIAL_HIGHLIGHT.emissiveColor = BABYLON.Color3.Yellow();
+
+
+
+
+export { MATERIAL_RED_MAT, MATERIAL_GREY, MATERIAL_RED, MATERIAL_BLUE, MATERIAL_GREEN, MATERIAL_WHITE, MATERIAL_HIGHLIGHT };
 
 

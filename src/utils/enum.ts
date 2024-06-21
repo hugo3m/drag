@@ -4,4 +4,4 @@ enum RENDERING_LAYER{
     DEBUG_SCENE = 3
 }
 
-export {RENDERING_LAYER}
+export {RENDERING_LAYER};
