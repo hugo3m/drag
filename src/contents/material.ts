@@ -37,15 +37,21 @@ MATERIAL_WHITE.specularColor = BABYLON.Color3.White();
 MATERIAL_WHITE.emissiveColor = BABYLON.Color3.White();
 MATERIAL_WHITE.alpha = 0.5;
 
-// red shiny
-const MATERIAL_HIGHLIGHT = new BABYLON.StandardMaterial("red_shiny", App.scene);
+// highlight
+const MATERIAL_HIGHLIGHT = new BABYLON.StandardMaterial("highlight", App.scene);
 MATERIAL_HIGHLIGHT.diffuseColor = new BABYLON.Color3(0, 0, 0);
 MATERIAL_HIGHLIGHT.specularColor = new BABYLON.Color3(0, 0, 0);
 MATERIAL_HIGHLIGHT.emissiveColor = BABYLON.Color3.Yellow();
 
+// highlight
+const MATERIAL_FOCUS = new BABYLON.StandardMaterial("highlight", App.scene);
+MATERIAL_FOCUS.diffuseColor = new BABYLON.Color3(0, 0, 0);
+MATERIAL_FOCUS.specularColor = new BABYLON.Color3(0, 0, 0);
+MATERIAL_FOCUS.emissiveColor = BABYLON.Color3.White();
 
 
 
-export { MATERIAL_RED_MAT, MATERIAL_GREY, MATERIAL_RED, MATERIAL_BLUE, MATERIAL_GREEN, MATERIAL_WHITE, MATERIAL_HIGHLIGHT };
+
+export { MATERIAL_RED_MAT, MATERIAL_GREY, MATERIAL_RED, MATERIAL_BLUE, MATERIAL_GREEN, MATERIAL_WHITE, MATERIAL_HIGHLIGHT, MATERIAL_FOCUS };
 
 

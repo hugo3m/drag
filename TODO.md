@@ -3,7 +3,8 @@
 ## Done
 
 - add color to the face of the cube
-- add axis color when dragging the cube
+- onclick: add axis color when dragging the cube
+- onhover: add color on hover axis
 - make cube faces transparent to see the axis
 
 

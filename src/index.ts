@@ -1,6 +1,6 @@
 import * as BABYLON from "@babylonjs/core"
 
-import { MATERIAL_BLUE, MATERIAL_GREEN, MATERIAL_GREY, MATERIAL_HIGHLIGHT, MATERIAL_RED, MATERIAL_WHITE } from "./contents/material";
+import { MATERIAL_BLUE, MATERIAL_FOCUS, MATERIAL_GREEN, MATERIAL_GREY, MATERIAL_HIGHLIGHT, MATERIAL_RED, MATERIAL_WHITE } from "./contents/material";
 
 import { App } from "./app";
 import { DrawDebugSphere } from "./utils/debug";
@@ -78,13 +78,15 @@ function main(){
     SetId(box_axes.xAxis, BOX_RIGHTAXIS_NAME);
     SetId(box_axes.yAxis, BOX_UPAXIS_NAME);
     SetId(box_axes.zAxis, BOX_FORWARDAXIS_NAME);
-    box_axes.xAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id).clone('xAxisDefaultMesh'));
-    box_axes.yAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id).clone('yAxisDefaultMesh'));
-    box_axes.zAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id).clone('zAxisDefaultMesh'));
+    box_axes.xAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id));
+    box_axes.yAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id));
+    box_axes.zAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id));
 
 
     ground.receiveShadows = true;
 
+
+    let previousPickedInfo: PickedInfo | null = null;
     let pickedInfo: PickedInfo | null = null;
 
     App.scene.onPointerObservable.add((pointerInfo) => {
@@ -97,12 +99,12 @@ function main(){
                     setTimeout(() => {
                         App.scene.activeCamera.attachControl(App.canvas, true);
                     }, 0);
-                    App.scene.getMeshesById(pickedInfo.mesh.id).forEach(mesh => {delete mesh.material; mesh.material = GetColor(mesh.id);});
+                    App.scene.getMeshesById(pickedInfo.mesh.id).forEach(mesh => mesh.material = GetColor(mesh.id));
                     pickedInfo = null;
                 }
 				break;
 			case BABYLON.PointerEventTypes.POINTERMOVE:
-                OnPointerMove(pickedInfo, box);
+                previousPickedInfo = OnPointerMove(pickedInfo, previousPickedInfo, box);
 				break;
         }
     });
@@ -113,13 +115,12 @@ function main(){
 
 
 
-function OnPointerDown(): PickedInfo | null{
+function OnPointerDown(): Nullable<PickedInfo>{
     const pickInfo = App.scene.pick(App.scene.pointerX, App.scene.pointerY, (mesh: BABYLON.Mesh) => [BOX_FORWARDAXIS_NAME, BOX_RIGHTAXIS_NAME, BOX_UPAXIS_NAME].includes(mesh.id));
-    console.log(pickInfo.hit);
     let pickedInfo: PickedInfo = null;
     if (pickInfo && pickInfo.hit) {
         pickedInfo = {mesh: pickInfo.pickedMesh, startPoint: pickInfo.pickedPoint};
-        App.scene.getMeshesById(pickedInfo.mesh.id).forEach(mesh => mesh.material = MATERIAL_HIGHLIGHT.clone('HIGHLIGHT'));
+        App.scene.getMeshesById(pickedInfo.mesh.id).forEach(mesh => mesh.material = MATERIAL_HIGHLIGHT);
         setTimeout(() => {
             App.scene.activeCamera.detachControl(App.canvas);
         }, 0);
@@ -128,8 +129,26 @@ function OnPointerDown(): PickedInfo | null{
 }
 
 
-function OnPointerMove(pickedInfo: PickedInfo | null, toMove: BABYLON.AbstractMesh){
-    if (!pickedInfo) return;
+function OnPointerMove(pickedInfo: Nullable<PickedInfo>, previousPickedInfo: Nullable<PickedInfo>, toMove: BABYLON.AbstractMesh): Nullable<PickedInfo>{
+    // if we are not holding an axis
+    if (!pickedInfo)
+    {
+        const pickInfo = App.scene.pick(App.scene.pointerX, App.scene.pointerY, (mesh: BABYLON.Mesh) => [BOX_FORWARDAXIS_NAME, BOX_RIGHTAXIS_NAME, BOX_UPAXIS_NAME].includes(mesh.id));
+        if (pickInfo && pickInfo.hit)
+        {
+            if ((previousPickedInfo && pickInfo.pickedMesh.id !== previousPickedInfo.mesh.id) || !previousPickedInfo)
+            {
+                App.scene.getMeshesById(pickInfo.pickedMesh.id).forEach(mesh => mesh.material = MATERIAL_FOCUS);
+            }
+            return { mesh: pickInfo.pickedMesh, startPoint: pickInfo.pickedPoint };
+        }
+        if(previousPickedInfo)
+        {
+            App.scene.getMeshesById(previousPickedInfo.mesh.id).forEach(mesh => mesh.material = GetColor(previousPickedInfo.mesh.id));
+        }
+        return null;
+    }
+    // else if we are holding an axis
     const Ray: BABYLON.Ray = App.scene.createPickingRay(App.scene.pointerX, App.scene.pointerY, null, App.scene.activeCamera);
     const Drag: Nullable<Dragging> = GetDragAxis(pickedInfo.mesh.id, toMove);
     if (!Drag) return;
@@ -149,7 +168,7 @@ function OnPointerMove(pickedInfo: PickedInfo | null, toMove: BABYLON.AbstractMe
         pickedInfo.startPoint = NewStartPoint;
         DrawDebugSphere(NewStartPoint, 1000);
     }
-
+    return null;
 }
 
 
