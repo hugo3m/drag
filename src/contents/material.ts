@@ -47,7 +47,7 @@ MATERIAL_HIGHLIGHT.emissiveColor = BABYLON.Color3.Yellow();
 const MATERIAL_FOCUS = new BABYLON.StandardMaterial("highlight", App.scene);
 MATERIAL_FOCUS.diffuseColor = new BABYLON.Color3(0, 0, 0);
 MATERIAL_FOCUS.specularColor = new BABYLON.Color3(0, 0, 0);
-MATERIAL_FOCUS.emissiveColor = BABYLON.Color3.White();
+MATERIAL_FOCUS.emissiveColor = new BABYLON.Color3(255/255, 215/255, 135/255);
 
 
 

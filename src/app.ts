@@ -2,7 +2,12 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 
-import { Engine, Scene } from "@babylonjs/core";
+import * as BABYLON from "@babylonjs/core"
+
+import { EPickingInfo, Nullable } from "./utils/type";
+
+import EAxis from "./components/axis";
+import Entity from "./components/entity";
 
 class App {
 
@@ -13,7 +18,7 @@ class App {
     /**
      * @description scene holding entities
      */
-    _scene: Scene;
+    _scene: BABYLON.Scene;
     /**
      * @description canvas
      */
@@ -21,13 +26,17 @@ class App {
     /**
      * @description engine
      */
-    _engine: Engine
+    _engine: BABYLON.Engine
+
+    _entities: Entity[] = [];
+
+    _interactEntities: Entity[] = [];
 
     /**
      * @description returns the scene instance
-     * @returns {Scene} scene instance
+     * @returns {BABYLON.Scene} scene instance
      */
-    public static get scene(): Scene
+    public static get scene(): BABYLON.Scene
     {
         return App.instance._scene;
     }
@@ -43,11 +52,29 @@ class App {
 
     /**
      * @description returns the engine
-     * @returns {Engine} engine
+     * @returns {BABYLON.Engine} engine
      */
-    public static get engine(): Engine
+    public static get engine(): BABYLON.Engine
     {
         return App.instance._engine;
+    }
+
+    /**
+     * @description returns the engine
+     * @returns {Engine} engine
+     */
+    public static get entities(): Entity[]
+    {
+        return App.instance._entities;
+    }
+
+    /**
+     * @description returns the engine
+     * @returns {Engine} engine
+     */
+    public static get interactEntities(): Entity[]
+    {
+        return App.instance._interactEntities;
     }
 
 
@@ -76,6 +103,42 @@ class App {
         });
     }
 
+    public static addEntity(entity: Entity){
+        App.entities.push(entity);
+        if(entity instanceof EAxis)
+        {
+            App.interactEntities.push(entity);
+        }
+    }
+
+    public static pickPointer(): Nullable<EPickingInfo>{
+
+        const interactMeshes: BABYLON.AbstractMesh[] = this.interactEntities.map(entity => entity._meshes).flat();
+        const pick = App.scene.pick(App.scene.pointerX, App.scene.pointerY, (mesh) => interactMeshes.includes(mesh));
+        if (pick && pick.hit)
+        {
+            let res: Nullable<Entity> = null;
+            App.interactEntities.forEach(entity => {
+                entity.meshes.forEach(eMesh => {
+                    if(eMesh === pick.pickedMesh) res = entity;
+                })
+            })
+            if(res) return {...pick, entity: res} as EPickingInfo;
+        }
+        return null;
+
+    }
+
+    public static findEntityFromMesh(mesh: BABYLON.AbstractMesh): Nullable<Entity>{
+        let res: Nullable<Entity> = null;
+        App.interactEntities.forEach(entity => {
+            entity.meshes.forEach(eMesh => {
+                if(eMesh === mesh) res = entity;
+            })
+        })
+        return res;
+    }
+
 
     private constructor()
     {
@@ -87,8 +150,8 @@ class App {
         document.body.appendChild(this._canvas);
 
         // initialize babylon scene and engine
-        this._engine = new Engine(this._canvas, true);
-        this._scene = new Scene(this._engine);
+        this._engine = new BABYLON.Engine(this._canvas, true);
+        this._scene = new BABYLON.Scene(this._engine);
 
         // hide/show the Inspector
         window.addEventListener("keydown", (ev) => {
@@ -106,4 +169,4 @@ class App {
 }
 
 
-export {App} ;
+export {App}

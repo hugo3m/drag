@@ -4,4 +4,10 @@ enum RENDERING_LAYER{
     DEBUG_SCENE = 3
 }
 
-export {RENDERING_LAYER};
+enum AXIS_ORIENT{
+    X_AXIS = 'x_axis',
+    Y_AXIS = 'y_axis',
+    Z_AXIS = 'z_axis'
+}
+
+export {RENDERING_LAYER, AXIS_ORIENT};

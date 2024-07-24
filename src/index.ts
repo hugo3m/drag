@@ -1,27 +1,16 @@
 import * as BABYLON from "@babylonjs/core"
 
+import { AXIS_ORIENT, RENDERING_LAYER } from "./utils/enum";
 import { MATERIAL_BLUE, MATERIAL_FOCUS, MATERIAL_GREEN, MATERIAL_GREY, MATERIAL_HIGHLIGHT, MATERIAL_RED, MATERIAL_WHITE } from "./contents/material";
+import { debugDrawPlane, debugDrawSphere } from "./utils/debug";
 
 import { App } from "./app";
-import { DrawDebugSphere } from "./utils/debug";
+import EAxis from "./components/axis";
+import Entity from "./components/entity";
+import MouseController from "./controllers/mouseController";
 import { Nullable } from "./utils/type";
-import { RENDERING_LAYER } from "./utils/enum";
 
 const BOX_NAME = 'BOX';
-const BOX_RIGHTAXIS_NAME = `${BOX_NAME}_RIGHT`;
-const BOX_UPAXIS_NAME = `${BOX_NAME}_UP`;
-const BOX_FORWARDAXIS_NAME = `${BOX_NAME}_FORWARD`;
-
-interface PickedInfo {
-    mesh: BABYLON.AbstractMesh,
-    startPoint: BABYLON.Vector3
-}
-
-interface Dragging {
-    drag: BABYLON.Vector3,
-    other: BABYLON.Vector3,
-    oother: BABYLON.Vector3
-}
 
 
 
@@ -53,8 +42,9 @@ function main(){
     faceColors[5] = new BABYLON.Color4(0, 1, 0, 1);
     const box = BABYLON.MeshBuilder.CreateBox(BOX_NAME, { width:1, height: 1, faceColors: faceColors}, App.scene);
     box.position.addInPlace(new BABYLON.Vector3(1, 1, 1));
-    box.material = MATERIAL_WHITE;
     box.renderingGroupId = RENDERING_LAYER.SCENE;
+    const eBox = new Entity(box, MATERIAL_WHITE);
+    App.addEntity(eBox);
     // shadow
     const shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
     shadowGenerator.addShadowCaster(box);
@@ -72,135 +62,46 @@ function main(){
     ZAxisLine.material = MATERIAL_BLUE.clone('material_blue_zaxisline');
 
     const box_axes = new BABYLON.AxesViewer(App.scene, undefined, RENDERING_LAYER.UI_SCENE, undefined, undefined, undefined, 2);
+
     box_axes.xAxis.parent = box;
+    const eXAxis = new EAxis(box_axes.xAxis, MATERIAL_RED.clone('eXAxis'), eBox, AXIS_ORIENT.X_AXIS);
+    App.addEntity(eXAxis);
+
     box_axes.yAxis.parent = box;
+    const eYAxis = new EAxis(box_axes.yAxis, MATERIAL_GREEN.clone('eYAxis'), eBox, AXIS_ORIENT.Y_AXIS);
+    App.addEntity(eYAxis);
+
     box_axes.zAxis.parent = box;
-    SetId(box_axes.xAxis, BOX_RIGHTAXIS_NAME);
-    SetId(box_axes.yAxis, BOX_UPAXIS_NAME);
-    SetId(box_axes.zAxis, BOX_FORWARDAXIS_NAME);
-    box_axes.xAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id));
-    box_axes.yAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id));
-    box_axes.zAxis.getChildMeshes().forEach(mesh => mesh.material = GetColor(mesh.id));
+    const eZAxis = new EAxis(box_axes.zAxis, MATERIAL_BLUE.clone('eZAxis'), eBox, AXIS_ORIENT.Z_AXIS);
+    App.addEntity(eZAxis);
+
+
+
+    box_axes.yAxis.getChildMeshes().forEach(mesh => mesh.material = MATERIAL_GREEN);
+
+    box_axes.zAxis.getChildMeshes().forEach(mesh => mesh.material = MATERIAL_BLUE);
 
 
     ground.receiveShadows = true;
 
-
-    let previousPickedInfo: PickedInfo | null = null;
-    let pickedInfo: PickedInfo | null = null;
+    const mouseController = new MouseController();
 
     App.scene.onPointerObservable.add((pointerInfo) => {
         switch (pointerInfo.type) {
 			case BABYLON.PointerEventTypes.POINTERDOWN:
-				pickedInfo = OnPointerDown();
+				mouseController.onPointerDown();
 				break;
 			case BABYLON.PointerEventTypes.POINTERUP:
-                if (pickedInfo){
-                    setTimeout(() => {
-                        App.scene.activeCamera.attachControl(App.canvas, true);
-                    }, 0);
-                    App.scene.getMeshesById(pickedInfo.mesh.id).forEach(mesh => mesh.material = GetColor(mesh.id));
-                    pickedInfo = null;
-                }
+                mouseController.onPointerUp();
 				break;
 			case BABYLON.PointerEventTypes.POINTERMOVE:
-                previousPickedInfo = OnPointerMove(pickedInfo, previousPickedInfo, box);
+                mouseController.onPointerMove();
 				break;
         }
     });
 
 
     App.start();
-}
-
-
-
-function OnPointerDown(): Nullable<PickedInfo>{
-    const pickInfo = App.scene.pick(App.scene.pointerX, App.scene.pointerY, (mesh: BABYLON.Mesh) => [BOX_FORWARDAXIS_NAME, BOX_RIGHTAXIS_NAME, BOX_UPAXIS_NAME].includes(mesh.id));
-    let pickedInfo: PickedInfo = null;
-    if (pickInfo && pickInfo.hit) {
-        pickedInfo = {mesh: pickInfo.pickedMesh, startPoint: pickInfo.pickedPoint};
-        App.scene.getMeshesById(pickedInfo.mesh.id).forEach(mesh => mesh.material = MATERIAL_HIGHLIGHT);
-        setTimeout(() => {
-            App.scene.activeCamera.detachControl(App.canvas);
-        }, 0);
-    }
-    return pickedInfo;
-}
-
-
-function OnPointerMove(pickedInfo: Nullable<PickedInfo>, previousPickedInfo: Nullable<PickedInfo>, toMove: BABYLON.AbstractMesh): Nullable<PickedInfo>{
-    // if we are not holding an axis
-    if (!pickedInfo)
-    {
-        const pickInfo = App.scene.pick(App.scene.pointerX, App.scene.pointerY, (mesh: BABYLON.Mesh) => [BOX_FORWARDAXIS_NAME, BOX_RIGHTAXIS_NAME, BOX_UPAXIS_NAME].includes(mesh.id));
-        if (pickInfo && pickInfo.hit)
-        {
-            if ((previousPickedInfo && pickInfo.pickedMesh.id !== previousPickedInfo.mesh.id) || !previousPickedInfo)
-            {
-                App.scene.getMeshesById(pickInfo.pickedMesh.id).forEach(mesh => mesh.material = MATERIAL_FOCUS);
-            }
-            return { mesh: pickInfo.pickedMesh, startPoint: pickInfo.pickedPoint };
-        }
-        if(previousPickedInfo)
-        {
-            App.scene.getMeshesById(previousPickedInfo.mesh.id).forEach(mesh => mesh.material = GetColor(previousPickedInfo.mesh.id));
-        }
-        return null;
-    }
-    // else if we are holding an axis
-    const Ray: BABYLON.Ray = App.scene.createPickingRay(App.scene.pointerX, App.scene.pointerY, null, App.scene.activeCamera);
-    const Drag: Nullable<Dragging> = GetDragAxis(pickedInfo.mesh.id, toMove);
-    if (!Drag) return;
-    const dotDirOther = Math.abs(Drag.other.dot(Ray.direction.normalize()));
-    const dorDirOother = Math.abs(Drag.oother.dot(Ray.direction.normalize()));
-    const norm: BABYLON.Vector3 = dotDirOther > dorDirOother ? Drag.other :  Drag.oother;
-    const plane: BABYLON.Plane = BABYLON.Plane.FromPositionAndNormal(pickedInfo.startPoint, norm);
-    const intersectionDistance: number = Ray.intersectsPlane(plane);
-    if(intersectionDistance)
-    {
-        const IntersectionRayPlane: BABYLON.Vector3 = new BABYLON.Vector3(Ray.origin.x + Ray.direction.x * intersectionDistance, Ray.origin.y + Ray.direction.y * intersectionDistance, Ray.origin.z + Ray.direction.z * intersectionDistance);
-        const MouseDirection: BABYLON.Vector3 = IntersectionRayPlane.subtract(pickedInfo.startPoint);
-        const DotToDragAxis: number = Drag.drag.dot(MouseDirection);
-        const Diff = new BABYLON.Vector3(Drag.drag.x * DotToDragAxis, Drag.drag.y * DotToDragAxis, Drag.drag.z * DotToDragAxis);
-        toMove.position.addInPlace(Diff);
-        const NewStartPoint: BABYLON.Vector3 = Diff.add(pickedInfo.startPoint);
-        pickedInfo.startPoint = NewStartPoint;
-        DrawDebugSphere(NewStartPoint, 1000);
-    }
-    return null;
-}
-
-
-function GetDragAxis(id: string, toMove: BABYLON.AbstractMesh): Nullable<Dragging>{
-    switch(id){
-        case BOX_RIGHTAXIS_NAME:
-            return {drag: toMove.right, other: toMove.up, oother: toMove.forward}
-        case BOX_UPAXIS_NAME:
-            return {drag: toMove.up, other: toMove.right, oother: toMove.forward};
-        case BOX_FORWARDAXIS_NAME:
-            return {drag: toMove.forward, other: toMove.right, oother: toMove.up};
-        default:
-            return null;
-    }
-}
-
-function GetColor(id: string): BABYLON.Material {
-    switch(id){
-        case BOX_RIGHTAXIS_NAME:
-            return MATERIAL_RED;
-        case BOX_UPAXIS_NAME:
-            return MATERIAL_GREEN;
-        case BOX_FORWARDAXIS_NAME:
-            return MATERIAL_BLUE;
-        default:
-            return null;
-    }
-}
-
-function SetId(node: BABYLON.TransformNode, id: string){
-    node.id = id;
-    node.getChildMeshes().forEach(mesh => mesh.id = id);
 }
 
 main();
