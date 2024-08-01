@@ -11,6 +11,8 @@ import Entity from "./components/entity";
 
 class App {
 
+    // #TODO: meshes to entity/id instead of listing
+
     /**
      * @description unique App singleton _instance
      */
@@ -111,19 +113,31 @@ class App {
         }
     }
 
+    /**
+     * Custom pick to retrieve an entity instead of a mesh
+     * @returns {Nullable<EPickingInfo>} entity picking info
+     */
     public static pickPointer(): Nullable<EPickingInfo>{
-
+        // restrict to only interactable meshes
         const interactMeshes: BABYLON.AbstractMesh[] = this.interactEntities.map(entity => entity._meshes).flat();
+        // pick from mouse
         const pick = App.scene.pick(App.scene.pointerX, App.scene.pointerY, (mesh) => interactMeshes.includes(mesh));
+        // if pick and hit
         if (pick && pick.hit)
         {
+            // find corresponding entity
             let res: Nullable<Entity> = null;
             App.interactEntities.forEach(entity => {
                 entity.meshes.forEach(eMesh => {
                     if(eMesh === pick.pickedMesh) res = entity;
                 })
             })
-            if(res) return {...pick, entity: res} as EPickingInfo;
+            // if an entity is found
+            if(res !== null)
+            {
+                // return result
+                return {...pick, entity: res} as EPickingInfo;
+            }
         }
         return null;
 

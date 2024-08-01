@@ -4,6 +4,6 @@ import Entity from "src/components/entity";
 
 type Nullable<T> = T | null;
 
-type EPickingInfo = BABYLON.PickingInfo & { entity: Entity};
+type EPickingInfo = BABYLON.PickingInfo & { entity: Entity };
 
-export { Nullable, EPickingInfo }
+export { Nullable, EPickingInfo };
