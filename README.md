@@ -20,8 +20,6 @@ npm install
 npm run start
 ```
 
-http://localhost:8080
-
 ### Docker
 *Command from the root folder of the project.*
 ```
@@ -29,4 +27,4 @@ docker build . --tag {your_tag}
 docker run --publish 8080:8080 {your_tag}
 ```
 
-http://localhost:8080
+Access at http://localhost:8080
