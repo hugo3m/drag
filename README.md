@@ -1,6 +1,6 @@
-# AABB
+# DRAG
 
-AABB initially a project to learn [BabylonJS](https://www.babylonjs.com/). The idea was to reproduce something similar to the sample project explaning how AABB collision works from [Mozilla](https://mozdevs.github.io/gamedev-js-3d-aabb/physics.html). The first step of the project was to drag a mesh around a scene. But developing this feature was, if not difficult, at least more complex than I initially thought. The project is now about showing what are the maths behind dragging objects.
+Drag initially a project to learn [BabylonJS](https://www.babylonjs.com/). The idea was to reproduce something similar to the sample project explaning how AABB collision works from [Mozilla](https://mozdevs.github.io/gamedev-js-3d-aabb/physics.html). The first step of the project was to drag a mesh around a scene. But developing this feature was, if not difficult, at least more complex than I initially thought. The project is now about showing what are the maths behind dragging objects.
 
 ## How to get started
 
