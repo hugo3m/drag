@@ -1,27 +1,29 @@
 {
-  "name": "aabb",
+  "name": "drag",
   "version": "1.0.0",
-  "description": "aabb babylonjs example",
+  "description": "drag babylonjs example",
   "main": "index.js",
   "scripts": {
     "build": "npx webpack --config webpack.config.js",
-    "start": "npx webpack-dev-server --port 8080 --config webpack.config.js"
+    "start": "npx webpack-dev-server --port 8080 --config webpack.config.js",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hugo3m/aabb.git"
+    "url": "git+https://github.com/hugo3m/.git"
   },
   "author": "Hugo Martineau",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hugo3m/aabb/issues"
+    "url": "https://github.com/hugo3m/drag/issues"
   },
-  "homepage": "https://github.com/hugo3m/aabb#readme",
+  "homepage": "https://github.com/hugo3m/drag#readme",
   "devDependencies": {
     "@babylonjs/core": "^7.9.0",
     "@babylonjs/inspector": "^7.9.0",
     "@eslint/js": "^9.4.0",
     "eslint": "^9.4.0",
+    "gh-pages": "^6.1.1",
     "globals": "^15.4.0",
     "html-webpack-plugin": "^5.6.0",
     "ts-loader": "^9.5.1",
