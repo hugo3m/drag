@@ -38,7 +38,7 @@ function debugDrawSphere(position: BABYLON.Vector3, time: Nullable<number> = nul
  */
 function debugDrawPlane(position: BABYLON.Vector3, abstractPlane: BABYLON.Plane, time: Nullable<number> = null, material: Nullable<BABYLON.Material> = null): BABYLON.Mesh
 {
-    const plane = BABYLON.MeshBuilder.CreatePlane("debug_plane", {sourcePlane: abstractPlane, width: 20, height: 20});
+    const plane = BABYLON.MeshBuilder.CreatePlane("debug_plane", {sourcePlane: abstractPlane, width: 20, height: 20, sideOrientation: BABYLON.Mesh.DOUBLESIDE});
     plane.position = position;
     plane.renderingGroupId = RENDERING_LAYER.DEBUG_SCENE;
     if(material)
