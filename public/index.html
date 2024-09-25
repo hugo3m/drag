@@ -5,11 +5,49 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="styles.css">
-    <title>Drag</title>
+    <title>Drag hugo3m</title>
 </head>
 
-<body>
+<body style="display:flex; flex:1;">
+    <div style="display: flex; flex: 1; flex-direction: column; min-width: 40%; max-width: 40%; overflow-y: auto;">
+        <h1>Drag from <a href="https://github.com/hugo3m/drag" target="_blank">hugo3m</a></h1>
+        <h2>Description:</h2>
+        <p>Drag is an open source project showing the mathematics behind dragging an object in a 3D environment. When
+            holding your cursor on an axis, the following happens:
+        <ul>
+            <li>A vector <b>Vinit</b> is created with the direction from the camera to the intersection from the raycast
+                from the
+                camera to the cursor.</li>
+            <li>From this vector, a plane is created using, as a normal, one of the two vectors normal to the one being
+                dragged. <i>If you choose to drag the vector <b>right</b>, the vector used as a normal for the plane
+                    will either be <b>top</b> or <b>front</b>.</i> The vector which has the lowest angle with
+                <b>Vinit</b> is chosen. <i>It ensures that the plane will morelikely face the camera.</i>
+            </li>
+            <li>The scene displays a plane with the color of the normal vector. The plane is used as a surface to
+                interesect with the raycast from the camera to your cursor when moving your cursor around. The result of
+                the intersection is a yellow sphere, following your cursor within the plane.
+            </li>
+            <li>The final step is to project the intersection on the dragged axis and change the position according to
+                the distance from the initial dragged. The result of the projection is a sphere of the color of the
+                dragged axis.
+            </li>
+        </ul>
+        </p>
+        <h2>Todo:</h2>
+        <p>
+        <ul>
+            <li>Rotation of the cube.</li>
+            <li>Dragging along a plane.</li>
+            <li>Dragging from the root.</li>
+        </ul>
+        </p>
+    </div>
+
 </body>
+
+<style>
+
+</style>
 
 
 </html>

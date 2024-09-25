@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx webpack --config webpack.config.js",
     "start": "npx webpack-dev-server --port 8080 --config webpack.config.js",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "repository": {
     "type": "git",
